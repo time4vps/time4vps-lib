@@ -1,6 +1,7 @@
 {
   "name": "time4vps/lib",
   "type": "library",
+  "version": "1.0",
   "support":
   {
     "email": "support@time4vps.eu",

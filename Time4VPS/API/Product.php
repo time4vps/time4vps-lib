@@ -7,26 +7,25 @@ use Time4VPS\Exceptions\APIException;
 use Time4VPS\Exceptions\AuthException;
 use Time4VPS\Exceptions\Exception;
 
-class Servers extends Endpoint
+class Product extends Endpoint
 {
     /**
-     * Servers constructor.
      * @throws Exception
      */
     public function __construct()
     {
-        parent::__construct('server');
+        parent::__construct('category');
     }
 
     /**
-     * Get all servers
-     * @return array Available servers array
+     * Get available VPS servers
+     *
+     * @return array
      * @throws APIException
      * @throws AuthException
      */
-    public function all()
+    public function getAvailableVPS()
     {
-        return $this->get();
+        return $this->get('/available/vps');
     }
-
 }

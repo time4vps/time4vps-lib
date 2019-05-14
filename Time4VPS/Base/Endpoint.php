@@ -2,38 +2,87 @@
 
 namespace Time4VPS\Base;
 
-use GuzzleHttp\Exception\GuzzleException;
-use Time4VPS\Exceptions\APIException;
+use Time4VPS\Exceptions\Exception;
 
-abstract class Endpoint
+class Endpoint
 {
     /**
-     * @var string API Endpoint URL
+     * @var string API Endpoint Path
      */
-    private $url = 'https://billing.time4vps.eu/api/';
+    private $endpoint;
 
     /**
-     * @var string API Endpoint path
+     * @var string Base API Url
      */
-    private $endpoint = '';
+    private static $base_url;
 
     /**
-     * @var \GuzzleHttp\Client
+     * @var string API Username
      */
-    private $client;
+    private static $api_username;
 
-    public function __construct($endpoint)
+    /**
+     * @var string API Password
+     */
+    private static $api_password;
+
+    /**
+     * @var callable Debug function
+     */
+    private static $debug_function;
+
+    /**
+     * Endpoint constructor.
+     * @param $endpoint
+     * @throws Exception
+     */
+    protected function __construct($endpoint)
     {
-        $this->client = new \GuzzleHttp\Client();
+        if (!isset(self::$base_url)) {
+            throw new Exception('API Endpoint Error: Base URL is not set');
+        }
 
-        $endpoint = trim($endpoint, '/');
-        $this->endpoint = "{$this->url}{$endpoint}";
+        if (!isset(self::$api_username) || !isset(self::$api_password)) {
+            throw new Exception('API Endpoint Error: Credentials are not set');
+        }
+
+        $this->endpoint = trim($endpoint, '/');
+    }
+
+    /**
+     * Base API Url
+     *
+     * @param $url
+     */
+    public static function BaseURL($url)
+    {
+        self::$base_url = $url;
+    }
+
+    /**
+     * Set auth details
+     *
+     * @param $username
+     * @param $password
+     */
+    public static function Auth($username, $password)
+    {
+        self::$api_username = $username;
+        self::$api_password = $password;
+    }
+
+    /**
+     * Set debug function
+     *
+     * @param $function
+     */
+    public static function DebugFunction($function) {
+        self::$debug_function = $function;
     }
 
     /**
      * @param string $path API relative path
      * @return array
-     * @throws APIException
      */
     public function get($path = "") {
         return $this->request('GET', $path);
@@ -43,7 +92,6 @@ abstract class Endpoint
      * @param string $path API relative path
      * @param array $data Post Data
      * @return array
-     * @throws APIException
      */
     public function post($path = "", $data = []) {
         return $this->request('POST', $path, $data);
@@ -55,26 +103,30 @@ abstract class Endpoint
      * @param string $method GET, POST, PUT, DELETE
      * @param string $path API relative path
      * @param array $data Post Data
+     * @param callable $logFunction For debug purposes
      * @return array
-     * @throws APIException
      */
-    public function request($method, $path, $data = []){
-        try {
-            $request = $this->client->request($method, "{$this->endpoint}/{$path}", $data);
-            $response = json_decode($request->getBody(), true);
+    public function request($method, $path, $data = [], $logFunction = null){
 
-            if (!$response) {
-                throw new APIException('Invalid JSON received');
-            }
+        $url = "{$this->endpoint}{$path}";
 
-            if (array_key_exists('error', $response)) {
-                throw new APIException('Error: ' . $response['error']);
-            }
+        $curl = curl_init();
 
-            return $response;
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "utf-8",
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_CUSTOMREQUEST => $method,
+            CURLOPT_USERPWD => self::$api_username . ':' . self::$api_password,
+            CURLOPT_POSTFIELDS => $data
+        ]);
 
-        } catch (GuzzleException $e) {
-            throw new APIException('HTTP Client error: ' . $e->getMessage());
-        }
+        $response = curl_exec($curl);
+        $error = curl_error($curl);
+
+        curl_close($curl);
+
+        return $response;
     }
 }

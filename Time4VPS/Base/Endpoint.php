@@ -2,6 +2,8 @@
 
 namespace Time4VPS\Base;
 
+use Time4VPS\Exceptions\APIException;
+use Time4VPS\Exceptions\AuthException;
 use Time4VPS\Exceptions\Exception;
 
 class Endpoint
@@ -83,6 +85,8 @@ class Endpoint
     /**
      * @param string $path API relative path
      * @return array
+     * @throws APIException
+     * @throws AuthException
      */
     public function get($path = "") {
         return $this->request('GET', $path);
@@ -92,6 +96,8 @@ class Endpoint
      * @param string $path API relative path
      * @param array $data Post Data
      * @return array
+     * @throws APIException
+     * @throws AuthException
      */
     public function post($path = "", $data = []) {
         return $this->request('POST', $path, $data);
@@ -105,10 +111,12 @@ class Endpoint
      * @param array $data Post Data
      * @param callable $logFunction For debug purposes
      * @return array
+     * @throws APIException
+     * @throws AuthException
      */
     public function request($method, $path, $data = [], $logFunction = null){
 
-        $url = "{$this->endpoint}{$path}";
+        $url = self::$base_url . "{$this->endpoint}{$path}";
 
         $curl = curl_init();
 
@@ -124,8 +132,30 @@ class Endpoint
 
         $response = curl_exec($curl);
         $error = curl_error($curl);
-
         curl_close($curl);
+
+        if (is_callable(self::$debug_function)) {
+            call_user_func(self::$debug_function, func_get_args(), $response);
+        }
+
+        if ($error) {
+            throw new APIException("API Error: {$error}");
+        }
+
+        $response = json_decode($response, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new APIException("Received invalid response from API");
+        }
+
+        if (array_key_exists('error', $response)) {
+            $error = array_shift($response['error']);
+
+            if ($error === 'wronglogin') {
+                throw new AuthException('Invalid username / password combination');
+            }
+
+            throw new APIException('Error: ' . $response['error']);
+        }
 
         return $response;
     }

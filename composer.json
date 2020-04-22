@@ -1,0 +1,15 @@
+{
+  "name": "time4vps/lib",
+  "type": "library",
+  "version": "1.0",
+  "support":
+  {
+    "email": "support@time4vps.com",
+    "forum": "https://community.time4vps.com/"
+  },
+  "require":
+  {
+    "php": ">=7.0",
+    "guzzlehttp/guzzle": "^6.3"
+  }
+}

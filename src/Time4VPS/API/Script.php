@@ -12,7 +12,7 @@ class Script extends Endpoint
     /**
      * @var int Script ID
      */
-    private $script_id;
+    protected $script_id;
 
     /**
      * @param null|int $script_id
@@ -52,9 +52,7 @@ class Script extends Endpoint
      */
     public function details($field = null)
     {
-        if (!$this->script_id) {
-            throw new APIException('Script ID is not set');
-        }
+        $this->mustHave('script_id');
 
         $return = $this->get("/{$this->script_id}");
         return $field ? $return[$field] : $return;

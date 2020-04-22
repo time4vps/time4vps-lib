@@ -14,7 +14,7 @@ class Server extends Endpoint
     /**
      * @var int $server_id Server ID
      */
-    private $server_id;
+    protected $server_id;
 
     /**
      * Server constructor
@@ -22,12 +22,15 @@ class Server extends Endpoint
      * @param $server_id
      * @throws Exception
      */
-    public function __construct($server_id)
+    public function __construct($server_id = null)
     {
         parent::__construct('server');
-        $this->server_id = (int) $server_id;
-        if ($this->server_id <= 0) {
-            throw new Exception("Server ID '{$server_id}' is invalid");
+
+        if ($server_id) {
+            $this->server_id = (int)$server_id;
+            if ($this->server_id <= 0) {
+                throw new Exception("Server ID '{$server_id}' is invalid");
+            }
         }
     }
 
@@ -38,7 +41,18 @@ class Server extends Endpoint
      */
     public function id()
     {
+        $this->mustHave('server_id');
         return $this->server_id;
+    }
+
+    /**
+     * Get all active servers
+     *
+     * @return array
+     */
+    public function all()
+    {
+        return $this->get('/');
     }
 
     /**
@@ -50,6 +64,8 @@ class Server extends Endpoint
      */
     public function details()
     {
+        $this->mustHave('server_id');
+
         return $this->get("/{$this->server_id}");
     }
 
@@ -62,6 +78,8 @@ class Server extends Endpoint
      */
     public function reboot()
     {
+        $this->mustHave('server_id');
+
         $response = $this->post("/{$this->server_id}/reboot");
         return (int) $response['task_id'];
     }
@@ -78,6 +96,8 @@ class Server extends Endpoint
      */
     public function reinstall($os, $ssh_key = null, $script = null)
     {
+        $this->mustHave('server_id');
+
         $response = $this->post("/{$this->server_id}/reinstall", [
             'os' => $os,
             'ssh_key' => $ssh_key,
@@ -98,6 +118,8 @@ class Server extends Endpoint
      */
     public function emergencyConsole($timeout = '1h', $whitelabel = true)
     {
+        $this->mustHave('server_id');
+
         $response = $this->post("/{$this->server_id}/webconsole", [
             'timeout' => $timeout,
             'whitelabel' => $whitelabel ? 'true' : 'false'
@@ -116,9 +138,12 @@ class Server extends Endpoint
      */
     public function rename($hostname)
     {
+        $this->mustHave('server_id');
+
         $response = $this->post("/{$this->server_id}/rename", [
             'hostname' => $hostname
         ]);
+
         return (int) $response['task_id'];
     }
 
@@ -131,6 +156,8 @@ class Server extends Endpoint
      */
     public function resetPassword()
     {
+        $this->mustHave('server_id');
+
         $response = $this->post("/{$this->server_id}/resetpassword");
         return (int) $response['task_id'];
     }
@@ -146,10 +173,13 @@ class Server extends Endpoint
      */
     public function setPTR($ip_address, $hostname)
     {
+        $this->mustHave('server_id');
+
         $response = $this->post("/{$this->server_id}/changeptr", [
             'ip_address' => $ip_address,
             'hostname' => $hostname
         ]);
+
         return (int) $response['task_id'];
     }
 
@@ -162,6 +192,8 @@ class Server extends Endpoint
      */
     public function flushFirewall()
     {
+        $this->mustHave('server_id');
+
         $response = $this->post("/{$this->server_id}/flushfirewall");
         return (int) $response['task_id'];
     }
@@ -179,6 +211,8 @@ class Server extends Endpoint
      */
     public function setDNS($ns1, $ns2 = '', $ns3 = '', $ns4 = '')
     {
+        $this->mustHave('server_id');
+
         $response = $this->post("/{$this->server_id}/changedns", [
             'ns1' => $ns1,
             'ns2' => $ns2,
@@ -198,6 +232,7 @@ class Server extends Endpoint
      */
     public function availableOS()
     {
+        $this->mustHave('server_id');
         return $this->get("/{$this->server_id}/oses");
     }
 
@@ -211,6 +246,7 @@ class Server extends Endpoint
      */
     public function usageGraphs($width = 576)
     {
+        $this->mustHave('server_id');
         return $this->get("/{$this->server_id}/graphs/{$width}");
     }
 
@@ -223,6 +259,7 @@ class Server extends Endpoint
      */
     public function usageHistory()
     {
+        $this->mustHave('server_id');
         return $this->get("/{$this->server_id}/history");
     }
 
@@ -235,6 +272,7 @@ class Server extends Endpoint
      */
     public function additionalIPs()
     {
+        $this->mustHave('server_id');
         return $this->get("/{$this->server_id}/ips");
     }
 
@@ -249,10 +287,12 @@ class Server extends Endpoint
      */
     public function taskResult($task)
     {
+        $this->mustHave('server_id');
+
         try {
             $response = $this->get("/{$this->server_id}/task/{$task}");
         } catch (APIException $e) {
-            if ($e->getMessage() === 'API Error: Invalid task ID') {
+            if ($e->getMessage() === 'Invalid task ID') {
                 throw new InvalidTaskException($e);
             }
             throw $e;

@@ -2,6 +2,6 @@
 
 namespace Time4VPS\Exceptions;
 
-class APIException extends Exception {
+class APIException extends \Exception {
 
 }

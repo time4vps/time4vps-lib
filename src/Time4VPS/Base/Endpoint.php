@@ -11,7 +11,7 @@ class Endpoint
     /**
      * @var string API Endpoint Path
      */
-    private $endpoint;
+    protected $endpoint;
 
     /**
      * @var string Base API Url
@@ -85,8 +85,6 @@ class Endpoint
     /**
      * @param string $path API relative path
      * @return array
-     * @throws APIException
-     * @throws AuthException
      */
     public function get($path = "") {
         return $this->request('GET', $path);
@@ -96,8 +94,6 @@ class Endpoint
      * @param string $path API relative path
      * @param array $data Post Data
      * @return array
-     * @throws APIException
-     * @throws AuthException
      */
     public function post($path = "", $data = []) {
         return $this->request('POST', $path, $data);
@@ -111,10 +107,13 @@ class Endpoint
      * @param array $data Post Data
      * @param callable $logFunction For debug purposes
      * @return array
-     * @throws APIException
-     * @throws AuthException
      */
-    public function request($method, $path, $data = [], $logFunction = null){
+    public function request($method, $path, $data = null, $logFunction = null){
+
+        if ($method === 'POST') {
+            /*$this->endpoint = '';
+            $path = "debug";*/
+        }
 
         $url = self::$base_url . "{$this->endpoint}{$path}";
 
@@ -123,11 +122,15 @@ class Endpoint
         curl_setopt_array($curl, [
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_ENCODING => "utf-8",
             CURLOPT_TIMEOUT => 30,
             CURLOPT_CUSTOMREQUEST => $method,
             CURLOPT_USERPWD => self::$api_username . ':' . self::$api_password,
-            CURLOPT_POSTFIELDS => $data
+            CURLOPT_POSTFIELDS => $data ? json_encode($data) : null,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json'
+            ]
         ]);
 
         $response = curl_exec($curl);
@@ -135,11 +138,13 @@ class Endpoint
         curl_close($curl);
 
         if (is_callable(self::$debug_function)) {
-            call_user_func(self::$debug_function, func_get_args(), $response);
+            $args = func_get_args();
+            $args[1] = $url; //"{$this->endpoint}{$path}";
+            call_user_func(self::$debug_function, $args, $data, $response);
         }
 
         if ($error) {
-            throw new APIException("API Error: {$error}");
+            throw new APIException("Request error: {$error}");
         }
 
         $response = json_decode($response, true);
@@ -154,9 +159,27 @@ class Endpoint
                 throw new AuthException('Invalid username / password combination');
             }
 
-            throw new APIException('Error: ' . $response['error']);
+            if (!is_string($error)) {
+                array_unshift($response['error'], $error);
+                $error = json_encode($response['error']);
+            }
+
+            throw new APIException($error);
         }
 
         return $response;
+    }
+
+    /**
+     * Check some fields before doing API requests
+     *
+     * @param $field
+     * @throws APIException
+     */
+    protected function mustHave($field)
+    {
+        if (!$this->$field) {
+            throw new APIException("{$field} is not set");
+        }
     }
 }

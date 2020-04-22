@@ -11,7 +11,6 @@ composer install time4vps/lib
 ## Usage
 
 ```php
-
 require_once '/vendor/autoload.php';
 
 // Auth details

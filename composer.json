@@ -2,7 +2,6 @@
   "name": "time4vps/lib",
   "description": "UserAPI library for Time4VPS Hosting provider.",
   "type": "library",
-  "version": "1.0",
   "license": "MIT",
   "homepage": "https://www.time4vps.com/",
   "keywords": [

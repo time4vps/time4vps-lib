@@ -1,12 +1,21 @@
 {
   "name": "time4vps/lib",
+  "description": "UserAPI library for Time4VPS Hosting provider.",
   "type": "library",
   "version": "1.0",
+  "license": "MIT",
+  "keywords": ["time4vps", "hosting", "vps", "api"],
   "support":
   {
     "email": "support@time4vps.com",
     "forum": "https://community.time4vps.com/"
   },
+  "authors": [
+    {
+      "name": "Algirdas Čičinskas",
+      "email": "algirdas.c@iv.lt"
+    }
+  ],
   "require":
   {
     "php": ">=7.0",

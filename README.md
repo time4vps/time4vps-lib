@@ -11,14 +11,12 @@ composer install time4vps/lib
 ## Usage
 
 ```php
-require_once '/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 // Auth details
 $username = 'user';
 $password = 'pass123'; 
 
-// Setup endpoint
-Time4VPS\Base\Endpoint::BaseURL('https://billing.time4vps.com/api/');
 Time4VPS\Base\Endpoint::Auth($username, $password);
 
 // Get server details

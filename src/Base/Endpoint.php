@@ -16,7 +16,7 @@ class Endpoint
     /**
      * @var string Base API Url
      */
-    private static $base_url;
+    private static $base_url = 'https://billing.time4vps.com/api/';
 
     /**
      * @var string API Username

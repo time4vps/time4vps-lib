@@ -4,9 +4,14 @@
   "type": "library",
   "version": "1.0",
   "license": "MIT",
-  "keywords": ["time4vps", "hosting", "vps", "api"],
-  "support":
-  {
+  "homepage": "https://www.time4vps.com/",
+  "keywords": [
+    "time4vps",
+    "hosting",
+    "vps",
+    "api"
+  ],
+  "support": {
     "email": "support@time4vps.com",
     "forum": "https://community.time4vps.com/"
   },
@@ -16,9 +21,13 @@
       "email": "algirdas.c@iv.lt"
     }
   ],
-  "require":
-  {
+  "require": {
     "php": ">=7.0",
     "guzzlehttp/guzzle": "^6.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Time4VPS\\": "src/"
+    }
   }
 }

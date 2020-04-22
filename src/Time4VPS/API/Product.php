@@ -36,6 +36,7 @@ class Product extends Endpoint
      * Get product configuration details
      *
      * @return array
+     * @throws APIException|AuthException
      */
     public function details()
     {
@@ -49,8 +50,7 @@ class Product extends Endpoint
      * Get available VPS servers
      *
      * @return array
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function getAvailableVPS()
     {

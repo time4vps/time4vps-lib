@@ -38,8 +38,7 @@ class Order extends Endpoint
      * @param int $product_id
      * @param null $domain
      * @return array
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function create($product_id, $domain = null)
     {

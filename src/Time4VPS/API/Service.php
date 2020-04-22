@@ -34,20 +34,20 @@ class Service extends Endpoint
      * Get account details
      *
      * @return array
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function details()
     {
         $this->mustHave('service_id');
-
-        return array_shift($this->get("/{$this->service_id}"));
+        $details = $this->get("/{$this->service_id}");
+        return array_shift($details);
     }
 
     /**
      * Get all services
      *
      * @return array
+     * @throws APIException|AuthException
      */
     public function all()
     {
@@ -59,8 +59,7 @@ class Service extends Endpoint
      *
      * @param $order_num
      * @return int
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function fromOrder($order_num)
     {
@@ -75,8 +74,7 @@ class Service extends Endpoint
      * @param string $reason Termination reason
      * @param bool $immediate Immediate termination
      * @return array
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function cancel($reason, $immediate = false)
     {
@@ -92,6 +90,7 @@ class Service extends Endpoint
      * Get available upgrades
      *
      * @return array
+     * @throws APIException|AuthException
      */
     public function upgrades()
     {
@@ -103,8 +102,8 @@ class Service extends Endpoint
     /**
      * List addons 
      *
-     * @return arrayserv
-     * @throws APIException
+     * @return array
+     * @throws APIException|AuthException
      */
     public function addons()
     {
@@ -112,13 +111,14 @@ class Service extends Endpoint
 
         return $this->get("/{$this->service_id}/addon");
     }
-    
+
     /**
      * Upgrade service
      *
      * @param array $upgrades
      * @param string $cycle
      * @return array
+     * @throws APIException|AuthException
      */
     public function orderUpgrade($upgrades, $cycle = null)
     {
@@ -135,7 +135,7 @@ class Service extends Endpoint
      *
      * @param $addon_id
      * @return array
-     * @throws APIException
+     * @throws APIException|AuthException
      */
     public function orderAddon($addon_id)
     {

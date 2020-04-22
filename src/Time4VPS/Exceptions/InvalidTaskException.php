@@ -2,6 +2,7 @@
 
 namespace Time4VPS\Exceptions;
 
-class InvalidTaskException extends \Exception {
+class InvalidTaskException extends \Exception
+{
 
 }

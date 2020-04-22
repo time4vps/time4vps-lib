@@ -78,15 +78,18 @@ class Endpoint
      *
      * @param $function
      */
-    public static function DebugFunction($function) {
+    public static function DebugFunction($function)
+    {
         self::$debug_function = $function;
     }
 
     /**
      * @param string $path API relative path
      * @return array
+     * @throws APIException|AuthException
      */
-    public function get($path = "") {
+    public function get($path = "")
+    {
         return $this->request('GET', $path);
     }
 
@@ -94,8 +97,10 @@ class Endpoint
      * @param string $path API relative path
      * @param array $data Post Data
      * @return array
+     * @throws APIException|AuthException
      */
-    public function post($path = "", $data = []) {
+    public function post($path = "", $data = [])
+    {
         return $this->request('POST', $path, $data);
     }
 
@@ -107,14 +112,10 @@ class Endpoint
      * @param array $data Post Data
      * @param callable $logFunction For debug purposes
      * @return array
+     * @throws APIException|AuthException
      */
-    public function request($method, $path, $data = null, $logFunction = null){
-
-        if ($method === 'POST') {
-            /*$this->endpoint = '';
-            $path = "debug";*/
-        }
-
+    public function request($method, $path, $data = null, $logFunction = null)
+    {
         $url = self::$base_url . "{$this->endpoint}{$path}";
 
         $curl = curl_init();
@@ -139,7 +140,7 @@ class Endpoint
 
         if (is_callable(self::$debug_function)) {
             $args = func_get_args();
-            $args[1] = $url; //"{$this->endpoint}{$path}";
+            $args[1] = $url;
             call_user_func(self::$debug_function, $args, $data, $response);
         }
 

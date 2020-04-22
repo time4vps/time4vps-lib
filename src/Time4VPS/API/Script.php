@@ -34,8 +34,7 @@ class Script extends Endpoint
      * Get available init scripts
      *
      * @return array
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function all()
     {
@@ -47,8 +46,7 @@ class Script extends Endpoint
      *
      * @param null|string $field
      * @return array
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function details($field = null)
     {

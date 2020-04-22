@@ -38,6 +38,7 @@ class Server extends Endpoint
      * Server ID
      *
      * @return int
+     * @throws APIException|AuthException
      */
     public function id()
     {
@@ -49,6 +50,7 @@ class Server extends Endpoint
      * Get all active servers
      *
      * @return array
+     * @throws APIException|AuthException
      */
     public function all()
     {
@@ -59,8 +61,7 @@ class Server extends Endpoint
      * Get server details
      *
      * @return array Server Details
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function details()
     {
@@ -73,8 +74,7 @@ class Server extends Endpoint
      * Reboot server
      *
      * @return int Task ID
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function reboot()
     {
@@ -91,8 +91,7 @@ class Server extends Endpoint
      * @param string $ssh_key SSH Key
      * @param int $script Init Script ID
      * @return int Task ID
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function reinstall($os, $ssh_key = null, $script = null)
     {
@@ -113,8 +112,7 @@ class Server extends Endpoint
      * @param string $timeout 1h, 3h, 12h, etc.
      * @param bool $whitelabel Use whitelabel hostname for web based console
      * @return int Task ID
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function emergencyConsole($timeout = '1h', $whitelabel = true)
     {
@@ -133,8 +131,7 @@ class Server extends Endpoint
      *
      * @param string $hostname FQDN hostname pointed to main server IP address
      * @return int Task ID
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function rename($hostname)
     {
@@ -151,8 +148,7 @@ class Server extends Endpoint
      * Password reset
      *
      * @return int Task ID
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function resetPassword()
     {
@@ -168,8 +164,7 @@ class Server extends Endpoint
      * @param string $ip_address Additional IP address
      * @param string $hostname FQDN hostname pointed to additional IP address
      * @return int Task ID
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function setPTR($ip_address, $hostname)
     {
@@ -187,8 +182,7 @@ class Server extends Endpoint
      * Flush server firewall
      *
      * @return int Task ID
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function flushFirewall()
     {
@@ -206,8 +200,7 @@ class Server extends Endpoint
      * @param string $ns3 Nameserver 3 IP
      * @param string $ns4 Nameserver 4 IP
      * @return int Task ID
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function setDNS($ns1, $ns2 = '', $ns3 = '', $ns4 = '')
     {
@@ -227,8 +220,7 @@ class Server extends Endpoint
      * Get available OS list for server
      *
      * @return array OS List
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function availableOS()
     {
@@ -241,8 +233,7 @@ class Server extends Endpoint
      *
      * @param $width int Image width
      * @return array Usage graph array
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function usageGraphs($width = 576)
     {
@@ -254,8 +245,7 @@ class Server extends Endpoint
      * Server usage history
      *
      * @return array Usage history array
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function usageHistory()
     {
@@ -267,8 +257,7 @@ class Server extends Endpoint
      * Additional IPs
      *
      * @return array
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function additionalIPs()
     {
@@ -281,9 +270,7 @@ class Server extends Endpoint
      *
      * @param $task
      * @return array
-     * @throws APIException
-     * @throws AuthException
-     * @throws InvalidTaskException
+     * @throws APIException|AuthException|InvalidTaskException
      */
     public function taskResult($task)
     {

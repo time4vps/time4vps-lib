@@ -2,6 +2,7 @@
 
 namespace Time4VPS\Exceptions;
 
-class AuthException extends \Exception {
+class AuthException extends \Exception
+{
 
 }

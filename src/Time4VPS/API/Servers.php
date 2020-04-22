@@ -21,8 +21,7 @@ class Servers extends Endpoint
     /**
      * Get all servers
      * @return array Available servers array
-     * @throws APIException
-     * @throws AuthException
+     * @throws APIException|AuthException
      */
     public function all()
     {

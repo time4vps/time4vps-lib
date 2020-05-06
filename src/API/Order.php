@@ -44,9 +44,10 @@ class Order extends Endpoint
      */
     public function create($product_id, $domain = null, $cycle = 'm', $custom = [])
     {
-        return $this->post("/{$product_id}", array_merge($custom, [
+        return $this->post("/{$product_id}", [
             'domain' => $domain,
             'cycle' => $cycle,
-        ]));
+            'custom' => $custom
+        ]);
     }
 }
